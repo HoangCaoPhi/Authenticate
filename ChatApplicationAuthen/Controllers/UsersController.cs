@@ -1,0 +1,152 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ChatApplicationAuthen.Models;
+using Microsoft.AspNetCore.Authorization;
+using ChatApplicationAuthen.Helpers;
+using Microsoft.Extensions.Options;
+using ChatApplicationAuthen.Services;
+
+namespace ChatApplicationAuthen.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly ChatContext _context;
+        private readonly JWTSettings _jwtsettings;
+        private readonly UserService _userService;
+
+        public UsersController(ChatContext context, IOptions<JWTSettings> jwtsettings,  UserService userService)
+        {
+            _context = context;
+            _jwtsettings = jwtsettings.Value;
+            _userService = userService;
+        }
+        // POST: api/login
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] User user)
+        {
+            user = await _context.Users
+                   .Where(u => u.Email == user.Email
+                   && u.Password == user.Password).FirstOrDefaultAsync();
+         
+            // return null if user not found
+            if (user == null) return BadRequest(new { message = "Username or password is incorrect" });
+            // authentication successful so generate jwt token
+            var token = _userService.generateJwtToken(user);
+
+
+            return new AuthenticateResponse(user, token);
+        }
+
+        // POST: api/register
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthenticateResponse>> register([FromBody] User user)
+        {
+            user = await _context.Users
+                   .Where(u => u.Email == user.Email).FirstOrDefaultAsync();
+
+            if(user != null) if (user == null) return BadRequest(new { message = "Email da ton tai" });
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+
+
+        // GET: api/Users
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        // GET: api/Users/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        // PUT: api/Users/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(Guid id, User user)
+        {
+            if (id != user.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(user).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Users
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost("Register")]
+        public async Task<ActionResult<User>> Register(User user)
+        {
+            
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+
+        // DELETE: api/Users/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<User>> DeleteUser(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return user;
+        }
+
+        private bool UserExists(Guid id)
+        {
+            return _context.Users.Any(e => e.Id == id);
+        }
+    }
+}
