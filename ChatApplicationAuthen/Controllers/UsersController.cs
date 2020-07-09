@@ -52,7 +52,12 @@ namespace ChatApplicationAuthen.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticateResponse>> register([FromBody] User user)
         {
-            
+            if (string.IsNullOrWhiteSpace(user.Password))
+                throw new AppException("Password is required");
+
+            if (_context.Users.Any(x => x.Username == user.Username))
+                throw new AppException("Username \"" + user.Username + "\" is already taken");
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
