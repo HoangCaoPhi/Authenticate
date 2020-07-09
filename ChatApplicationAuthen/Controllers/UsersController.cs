@@ -32,16 +32,18 @@ namespace ChatApplicationAuthen.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] User user)
         {
+            // Lấy thông tin email và password từ request
             user = await _context.Users
                    .Where(u => u.Email == user.Email
                    && u.Password == user.Password).FirstOrDefaultAsync();
          
-            // return null if user not found
+            // Nếu không tìm thấy tài khoản
             if (user == null) return BadRequest(new { message = "Username or password is incorrect" });
-            // authentication successful so generate jwt token
+
+            // Nếu thành công thì gửi cho token cho client
             var token = _userService.generateJwtToken(user);
 
-
+            // Trả về respon gồm thông tin user và token
             return new AuthenticateResponse(user, token);
         }
 
@@ -50,11 +52,7 @@ namespace ChatApplicationAuthen.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticateResponse>> register([FromBody] User user)
         {
-            user = await _context.Users
-                   .Where(u => u.Email == user.Email).FirstOrDefaultAsync();
-
-            if(user != null) if (user == null) return BadRequest(new { message = "Email da ton tai" });
-
+            
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -115,18 +113,8 @@ namespace ChatApplicationAuthen.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("Register")]
-        public async Task<ActionResult<User>> Register(User user)
-        {
-            
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
-        }
+    
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
