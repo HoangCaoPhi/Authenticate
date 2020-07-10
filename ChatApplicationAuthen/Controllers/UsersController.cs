@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChatApplicationAuthen.Helpers;
 using Microsoft.Extensions.Options;
 using ChatApplicationAuthen.Services;
-
+using Microsoft.AspNetCore.Cors;
 
 namespace ChatApplicationAuthen.Controllers
 {
@@ -31,6 +31,7 @@ namespace ChatApplicationAuthen.Controllers
         // POST: api/login
         [AllowAnonymous]
         [HttpPost("login")]
+ 
         public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] LoginRequest loginRequest)
         {
             var resultAuthenService = await _userService.Login(loginRequest);
@@ -61,6 +62,7 @@ namespace ChatApplicationAuthen.Controllers
 
 
         // GET: api/Users
+ 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
