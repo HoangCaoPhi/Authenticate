@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using System.Text;
 
+
 namespace ChatApplicationAuthen
 {
     public class Startup
@@ -30,6 +31,10 @@ namespace ChatApplicationAuthen
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            services.AddControllers();
+ 
+
             services.AddDbContextPool<ChatContext>(
                       options => options.UseMySql(Configuration.GetConnectionString("ChatConnection")
              ));
@@ -60,10 +65,8 @@ namespace ChatApplicationAuthen
             });
 
             // configure DI for application services
-            services.AddScoped<UserService>();
+            services.AddScoped<IUserService, UserService>();
 
-             
-            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

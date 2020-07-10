@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApplicationAuthen.Models;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using ChatApplicationAuthen.Helpers;
 using Microsoft.Extensions.Options;
 using ChatApplicationAuthen.Services;
+
 
 namespace ChatApplicationAuthen.Controllers
 {
@@ -19,9 +19,10 @@ namespace ChatApplicationAuthen.Controllers
     {
         private readonly ChatContext _context;
         private readonly JWTSettings _jwtsettings;
-        private readonly UserService _userService;
+        private IUserService _userService;
+    
 
-        public UsersController(ChatContext context, IOptions<JWTSettings> jwtsettings,  UserService userService)
+        public UsersController(ChatContext context, IOptions<JWTSettings> jwtsettings, IUserService userService)
         {
             _context = context;
             _jwtsettings = jwtsettings.Value;
@@ -30,21 +31,14 @@ namespace ChatApplicationAuthen.Controllers
         // POST: api/login
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] User user)
+        public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] LoginRequest loginRequest)
         {
-            // Lấy thông tin email và password từ request
-            user = await _context.Users
-                   .Where(u => u.Email == user.Email
-                   && u.Password == user.Password).FirstOrDefaultAsync();
-         
-            // Nếu không tìm thấy tài khoản
-            if (user == null) return BadRequest(new { message = "Username or password is incorrect" });
+            var resultAuthenService = await _userService.Login(loginRequest);
 
-            // Nếu thành công thì gửi cho token cho client
-            var token = _userService.generateJwtToken(user);
+            if (resultAuthenService == null) return BadRequest(new { message = "Tài khoản hoặc mật khẩu không chính xác !" });
 
-            // Trả về respon gồm thông tin user và token
-            return new AuthenticateResponse(user, token);
+
+            return Ok(resultAuthenService);
         }
 
         // POST: api/register
@@ -52,16 +46,17 @@ namespace ChatApplicationAuthen.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticateResponse>> register([FromBody] User user)
         {
-            if (string.IsNullOrWhiteSpace(user.Password))
-                throw new AppException("Password is required");
-
-            if (_context.Users.Any(x => x.Username == user.Username))
-                throw new AppException("Username \"" + user.Username + "\" is already taken");
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            try
+            {
+                // create user
+                var resultAuthenService = await _userService.Register(user);
+                return Content("Ban da tao tai khoan thanh cong");
+            }
+            catch (AppException ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
 
@@ -119,7 +114,7 @@ namespace ChatApplicationAuthen.Controllers
         }
 
 
-    
+
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
