@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using ChatApplicationAuthen.Helpers;
 using Microsoft.Extensions.Options;
 using ChatApplicationAuthen.Services;
-using Microsoft.AspNetCore.Cors;
 
 namespace ChatApplicationAuthen.Controllers
 {
@@ -36,7 +35,7 @@ namespace ChatApplicationAuthen.Controllers
         {
             var resultAuthenService = await _userService.Login(userRequest);
 
-            if (resultAuthenService == null) return BadRequest(new { message = "Tài khoản hoặc mật khẩu không chính xác !" });
+            if (resultAuthenService == null) return BadRequest(new { message = "Email hoặc mật khẩu không chính xác !" });
 
 
             return Ok(resultAuthenService);
@@ -51,7 +50,7 @@ namespace ChatApplicationAuthen.Controllers
             {
                 // create user
                 var resultAuthenService = await _userService.Register(user);
-                return Content("Ban da tao tai khoan thanh cong");
+                return Ok(resultAuthenService);
             }
             catch (AppException ex)
             {

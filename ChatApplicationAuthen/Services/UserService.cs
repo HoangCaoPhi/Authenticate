@@ -17,7 +17,7 @@ namespace ChatApplicationAuthen.Services
     {
 
         Task<AuthenticateResponse> Login(User user);
-        Task<User> Register(User user);
+        Task<AuthenticateResponse> Register(User user);
 
     }
     public class UserService : IUserService
@@ -49,11 +49,11 @@ namespace ChatApplicationAuthen.Services
             return new AuthenticateResponse(user, token);
         }
 
-        public async Task<User> Register(User user)
+        public async Task<AuthenticateResponse> Register(User user)
         {
             // Kiem tra da nhap mat khau chua
             if (string.IsNullOrWhiteSpace(user.Password))
-                throw new AppException("Ban phai nhap mat khau");
+                throw new AppException("Bạn phải nhập mật khẩu !");
             // Kiem tra su ton tai cua email trong csdl
             if (_context.Users.Any(x => x.Email == user.Email))
                 throw new AppException("Email " + user.Email + " da ton tai");
@@ -61,7 +61,11 @@ namespace ChatApplicationAuthen.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            // Nếu tìm thấy tài khoản trả về token
+            var token = generateJwtToken(user);
+
+            // Trả về token và user
+            return new AuthenticateResponse(user, token);
         }
 
         public string generateJwtToken(User user)
