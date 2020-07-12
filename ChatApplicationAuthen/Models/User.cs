@@ -20,9 +20,6 @@ namespace ChatApplicationAuthen.Models
         public string LastName { get; set; }
 
         [Column(TypeName = "VARCHAR(250)")]
-        public string Username { get; set; }
-
-        [Column(TypeName = "VARCHAR(250)")]
         public string Email { get; set; }
 
         public string Password { get; set; }

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\HCPhi\\Documents\\Phi\\ChatApplicationAuthen\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj": {}
+    "C:\\Users\\HoangCaoPhi\\Desktop\\Authenticate\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj": {}
   },
   "projects": {
-    "C:\\Users\\HCPhi\\Documents\\Phi\\ChatApplicationAuthen\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj": {
+    "C:\\Users\\HoangCaoPhi\\Desktop\\Authenticate\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\HCPhi\\Documents\\Phi\\ChatApplicationAuthen\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj",
+        "projectUniqueName": "C:\\Users\\HoangCaoPhi\\Desktop\\Authenticate\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj",
         "projectName": "ChatApplicationAuthen",
-        "projectPath": "C:\\Users\\HCPhi\\Documents\\Phi\\ChatApplicationAuthen\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj",
-        "packagesPath": "C:\\Users\\HCPhi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\HCPhi\\Documents\\Phi\\ChatApplicationAuthen\\ChatApplicationAuthen\\obj\\",
+        "projectPath": "C:\\Users\\HoangCaoPhi\\Desktop\\Authenticate\\ChatApplicationAuthen\\ChatApplicationAuthen.csproj",
+        "packagesPath": "C:\\Users\\HoangCaoPhi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HoangCaoPhi\\Desktop\\Authenticate\\ChatApplicationAuthen\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\HCPhi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\HoangCaoPhi\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

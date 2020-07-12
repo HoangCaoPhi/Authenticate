@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApplicationAuthen.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20200709044019_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200712033332_chat")]
+    partial class chat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,9 +36,6 @@ namespace ChatApplicationAuthen.Migrations
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("VARCHAR(250)");
 
                     b.HasKey("Id");
 

@@ -35,9 +35,6 @@ namespace ChatApplicationAuthen.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("VARCHAR(250)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");

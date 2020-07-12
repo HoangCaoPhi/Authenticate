@@ -32,9 +32,9 @@ namespace ChatApplicationAuthen.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
  
-        public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] User userRequest)
         {
-            var resultAuthenService = await _userService.Login(loginRequest);
+            var resultAuthenService = await _userService.Login(userRequest);
 
             if (resultAuthenService == null) return BadRequest(new { message = "Tài khoản hoặc mật khẩu không chính xác !" });
 

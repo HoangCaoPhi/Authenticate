@@ -37,18 +37,19 @@ namespace ChatApplicationAuthen
                     {
                         builder.WithOrigins("http://localhost:5000", "http://localhost:4200")
                            .AllowAnyHeader()
-                                        .AllowAnyMethod()
-                                             .AllowCredentials(); ;
+                           .AllowAnyMethod()
+                           .AllowCredentials(); 
                     });
             });
 
             services.AddControllers();
 
-
+            // Cau hinh db
             services.AddDbContextPool<ChatContext>(
                       options => options.UseMySql(Configuration.GetConnectionString("ChatConnection")
              ));
 
+            // Cau hinh JWT
             // configure strongly typed settings objects
             var jwtSettingsSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSettingsSection);

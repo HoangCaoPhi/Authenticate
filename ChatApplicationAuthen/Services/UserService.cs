@@ -16,7 +16,7 @@ namespace ChatApplicationAuthen.Services
     public interface IUserService
     {
 
-        Task<AuthenticateResponse> Login(LoginRequest loginRequest);
+        Task<AuthenticateResponse> Login(User user);
         Task<User> Register(User user);
 
     }
@@ -32,12 +32,12 @@ namespace ChatApplicationAuthen.Services
             _context = context;
             _jwtSettings = jwtSettings.Value;
         }
-        public async Task<AuthenticateResponse> Login(LoginRequest loginRequest)
+        public async Task<AuthenticateResponse> Login(User userRequest)
         {
             // Lấy thông tin email và password từ request
             var user = await _context.Users
-                       .Where(u => u.Email == loginRequest.Email
-                             && u.Password == loginRequest.Password).FirstOrDefaultAsync();
+                       .Where(u => u.Email == userRequest.Email
+                             && u.Password == userRequest.Password).FirstOrDefaultAsync();
 
             // Nếu không tìm thấy tài khoản
             if (user == null) return null;
@@ -51,20 +51,13 @@ namespace ChatApplicationAuthen.Services
 
         public async Task<User> Register(User user)
         {
-            // validation
+            // Kiem tra da nhap mat khau chua
             if (string.IsNullOrWhiteSpace(user.Password))
                 throw new AppException("Ban phai nhap mat khau");
-
+            // Kiem tra su ton tai cua email trong csdl
             if (_context.Users.Any(x => x.Email == user.Email))
                 throw new AppException("Email " + user.Email + " da ton tai");
-
-            /*  byte[] passwordHash, passwordSalt;
-              CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-              user.PasswordHash = passwordHash;
-              user.PasswordSalt = passwordSalt;*/
-
-
+            // Them vao luu User
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
