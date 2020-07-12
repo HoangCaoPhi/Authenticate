@@ -1,4 +1,4 @@
-using ChatApplicationAuthen.Helpers;
+﻿using ChatApplicationAuthen.Helpers;
 using ChatApplicationAuthen.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,14 +49,12 @@ namespace ChatApplicationAuthen
                       options => options.UseMySql(Configuration.GetConnectionString("ChatConnection")
              ));
 
-            // Cau hinh JWT
-            // configure strongly typed settings objects
+            
             var jwtSettingsSection = Configuration.GetSection("JWTSettings");
             services.Configure<JWTSettings>(jwtSettingsSection);
 
-            // configure jwt authentication
-            var appSettings = jwtSettingsSection.Get<JWTSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            // Validation Token
+            var key = Encoding.ASCII.GetBytes(Configuration["Jwt:Secret"]);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,10 +66,18 @@ namespace ChatApplicationAuthen
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
+                    // đặt hoặc nhận các xác thực nếu ký bảo mật được gọi
                     ValidateIssuerSigningKey = true,
+                    // khóa chung được sử dụng để xác thực mã thông báo JWT đến
                     IssuerSigningKey = new SymmetricSecurityKey(key),
+                    // Yêu cầu xác nhận từ nhà phát hành
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    // Nhận hoặc đặt boolean để kiểm soát nếu đối tượng sẽ được xác thực trong quá trình xác thực mã thông báo.
+                    ValidateAudience = false,
+                    // Nhận mã nhà phát hành
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    // Nhận hoặc đặt một chuỗi đại diện cho đối tượng hợp lệ sẽ được sử dụng để kiểm tra đối tượng của mã thông báo
+                    ValidAudience = Configuration["Jwt:Audience"],
                 };
             });
 

@@ -9,7 +9,7 @@ using ChatApplicationAuthen.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Configuration;
 
 namespace ChatApplicationAuthen.Services
 {
@@ -22,15 +22,15 @@ namespace ChatApplicationAuthen.Services
     }
     public class UserService : IUserService
     {
-        private readonly JWTSettings _jwtSettings;
+        private readonly IConfiguration _config;
         private readonly ChatContext _context;
 
 
 
-        public UserService(ChatContext context, IOptions<JWTSettings> jwtSettings)
+        public UserService(ChatContext context, IConfiguration config)
         {
             _context = context;
-            _jwtSettings = jwtSettings.Value;
+            _config = config;
         }
         public async Task<AuthenticateResponse> Login(User userRequest)
         {
@@ -70,24 +70,23 @@ namespace ChatApplicationAuthen.Services
 
         public string generateJwtToken(User user)
         {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            // Encode key bí mật
-            var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                // Key hết hạn trong 7 ngày
-                Expires = DateTime.UtcNow.AddDays(7),
-                // Tạo Signingture Key
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("userId", user.Id.ToString()),
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: credentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

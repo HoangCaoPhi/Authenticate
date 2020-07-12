@@ -37,7 +37,6 @@ namespace ChatApplicationAuthen.Controllers
 
             if (resultAuthenService == null) return BadRequest(new { message = "Email hoặc mật khẩu không chính xác !" });
 
-
             return Ok(resultAuthenService);
         }
 
