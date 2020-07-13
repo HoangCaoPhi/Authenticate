@@ -19,9 +19,20 @@ namespace ChatApplicationAuthen.Models
         [Column(TypeName = "VARCHAR(250)")]
         public string LastName { get; set; }
 
-        [Column(TypeName = "VARCHAR(250)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string Email { get; set; }
 
+        [Column(TypeName = "VARCHAR(50)")]
+        public string ContactMobile { get; set; }
+
+        [Column(TypeName = "VARCHAR(50)")]
+        public string UserName { get; set; }
+
+        [Column(TypeName = "VARCHAR(255)")]
+        public string AvatarUrl { get; set; }
+
+        [Column(TypeName = "VARCHAR(64)")]
         public string Password { get; set; }
+
     }
 }

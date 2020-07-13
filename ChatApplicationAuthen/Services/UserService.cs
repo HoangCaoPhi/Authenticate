@@ -32,12 +32,32 @@ namespace ChatApplicationAuthen.Services
             _context = context;
             _config = config;
         }
+
+        // Ma hoa mat khau voi MD5
+        public static string CreateMD5(string input)
+        {
+            // Lay du lieu de dung md5
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Chuyen doi mang byte thanh chuoi hex
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
+            }
+        }
+
         public async Task<AuthenticateResponse> Login(User userRequest)
         {
             // Lấy thông tin email và password từ request
             var user = await _context.Users
                        .Where(u => u.Email == userRequest.Email
-                             && u.Password == userRequest.Password).FirstOrDefaultAsync();
+                             && u.Password == CreateMD5(userRequest.Password) ).FirstOrDefaultAsync();
 
             // Nếu không tìm thấy tài khoản
             if (user == null) return null;
@@ -57,15 +77,28 @@ namespace ChatApplicationAuthen.Services
             // Kiem tra su ton tai cua email trong csdl
             if (_context.Users.Any(x => x.Email == user.Email))
                 throw new AppException("Email " + user.Email + " da ton tai");
+
+            // Tao user voi request 
+            var userAdd = new User
+            {
+                Id = new Guid(),
+                UserName = user.UserName,
+                Password = CreateMD5(user.Password),
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                AvatarUrl = "",
+                Email = user.Email,
+                ContactMobile = user.ContactMobile
+            };
             // Them vao luu User
-            _context.Users.Add(user);
+            _context.Users.Add(userAdd);
             await _context.SaveChangesAsync();
 
             // Nếu tìm thấy tài khoản trả về token
-            var token = generateJwtToken(user);
+            var token = generateJwtToken(userAdd);
 
             // Trả về token và user
-            return new AuthenticateResponse(user, token);
+            return new AuthenticateResponse(userAdd, token);
         }
 
         public string generateJwtToken(User user)
@@ -77,6 +110,8 @@ namespace ChatApplicationAuthen.Services
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("userId", user.Id.ToString()),
+                new Claim("userName", user.UserName.ToString()),
+                new Claim("avt", user.AvatarUrl.ToString()),
             };
 
             var token = new JwtSecurityToken(

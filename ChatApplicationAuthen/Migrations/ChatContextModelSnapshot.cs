@@ -23,8 +23,14 @@ namespace ChatApplicationAuthen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.Property<string>("ContactMobile")
+                        .HasColumnType("VARCHAR(50)");
+
                     b.Property<string>("Email")
-                        .HasColumnType("VARCHAR(250)");
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("VARCHAR(250)");
@@ -33,7 +39,10 @@ namespace ChatApplicationAuthen.Migrations
                         .HasColumnType("VARCHAR(250)");
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("VARCHAR(32)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("VARCHAR(50)");
 
                     b.HasKey("Id");
 

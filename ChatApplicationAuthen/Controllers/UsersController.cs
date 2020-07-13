@@ -30,7 +30,7 @@ namespace ChatApplicationAuthen.Controllers
         // POST: api/login
         [AllowAnonymous]
         [HttpPost("login")]
- 
+
         public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] User userRequest)
         {
             var resultAuthenService = await _userService.Login(userRequest);

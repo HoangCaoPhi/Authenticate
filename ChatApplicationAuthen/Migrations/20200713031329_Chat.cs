@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ChatApplicationAuthen.Migrations
 {
-    public partial class chat : Migration
+    public partial class Chat : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,11 @@ namespace ChatApplicationAuthen.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     FirstName = table.Column<string>(type: "VARCHAR(250)", nullable: true),
                     LastName = table.Column<string>(type: "VARCHAR(250)", nullable: true),
-                    Email = table.Column<string>(type: "VARCHAR(250)", nullable: true),
-                    Password = table.Column<string>(nullable: true)
+                    Email = table.Column<string>(type: "VARCHAR(100)", nullable: true),
+                    ContactMobile = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    UserName = table.Column<string>(type: "VARCHAR(50)", nullable: true),
+                    AvatarUrl = table.Column<string>(type: "VARCHAR(255)", nullable: true),
+                    Password = table.Column<string>(type: "VARCHAR(64)", nullable: true)
                 },
                 constraints: table =>
                 {
