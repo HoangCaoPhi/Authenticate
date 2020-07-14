@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ChatApplicationAuthen.Models
+ 
+namespace ChatApplicationAuthen.Entities.DTO
 {
     public class User
     {
- 
         [Key]
         public Guid Id { get; set; }
 
@@ -33,6 +29,5 @@ namespace ChatApplicationAuthen.Models
 
         [Column(TypeName = "VARCHAR(64)")]
         public string Password { get; set; }
-
     }
 }

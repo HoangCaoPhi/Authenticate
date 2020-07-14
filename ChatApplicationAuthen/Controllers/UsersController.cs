@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ChatApplicationAuthen.Models;
 using Microsoft.AspNetCore.Authorization;
 using ChatApplicationAuthen.Helpers;
 using Microsoft.Extensions.Options;
 using ChatApplicationAuthen.Services;
+using ChatApplicationAuthen.Entities.DTO;
+using ChatApplicationAuthen.Entities.Models;
 
 namespace ChatApplicationAuthen.Controllers
 {
@@ -16,10 +17,15 @@ namespace ChatApplicationAuthen.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        #region Field
+
         private readonly ChatContext _context;
         private readonly JWTSettings _jwtsettings;
         private IUserService _userService;
-    
+
+        #endregion
+
+        #region Contructor
 
         public UsersController(ChatContext context, IOptions<JWTSettings> jwtsettings, IUserService userService)
         {
@@ -27,7 +33,16 @@ namespace ChatApplicationAuthen.Controllers
             _jwtsettings = jwtsettings.Value;
             _userService = userService;
         }
+
+        #endregion
+
+        #region Method
         // POST: api/login
+        /// <summary>
+        ///     Đăng nhập người dùng
+        /// </summary>
+        /// <param name="userRequest"> Thông tin người dùng đẩy lên từ client </param>
+        /// <returns> Trả về thông tin người dùng và token nếu đúng không trả thông báo lỗi </returns>
         [AllowAnonymous]
         [HttpPost("login")]
 
@@ -41,19 +56,22 @@ namespace ChatApplicationAuthen.Controllers
         }
 
         // POST: api/register
+        /// <summary>
+        ///     Đăng ký người dùng
+        /// </summary>
+        /// <param name="user"> Thông tin lấy từ request </param>
+        /// <returns> Trả về thông tin người dùng và token nếu đăng ký thành công không thì trả về thông báo </returns>
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticateResponse>> register([FromBody] User user)
         {
             try
             {
-                // create user
                 var resultAuthenService = await _userService.Register(user);
                 return Ok(resultAuthenService);
             }
             catch (AppException ex)
             {
-                // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -136,5 +154,6 @@ namespace ChatApplicationAuthen.Controllers
         {
             return _context.Users.Any(e => e.Id == id);
         }
+        #endregion
     }
 }

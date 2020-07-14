@@ -1,10 +1,10 @@
-﻿using System;
+﻿using ChatApplicationAuthen.Entities.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChatApplicationAuthen.Models;
 
-namespace ChatApplicationAuthen.Models
+namespace ChatApplicationAuthen.Entities.Models
 {
     public class AuthenticateResponse
     {

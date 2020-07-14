@@ -1,5 +1,4 @@
 ﻿using ChatApplicationAuthen.Helpers;
-using ChatApplicationAuthen.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
@@ -14,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using System.Text;
-
+using ChatApplicationAuthen.Entities.DTO;
 
 namespace ChatApplicationAuthen
 {

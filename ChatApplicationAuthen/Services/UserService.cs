@@ -4,35 +4,32 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using ChatApplicationAuthen.Helpers;
-using ChatApplicationAuthen.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using ChatApplicationAuthen.Entities.DTO;
+using ChatApplicationAuthen.Entities.Models;
 
 namespace ChatApplicationAuthen.Services
 {
-    public interface IUserService
-    {
-
-        Task<AuthenticateResponse> Login(User user);
-        Task<AuthenticateResponse> Register(User user);
-
-    }
+ 
     public class UserService : IUserService
     {
+        #region Field
         private readonly IConfiguration _config;
         private readonly ChatContext _context;
+        #endregion
 
-
-
+        #region Constructor
         public UserService(ChatContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
+        #endregion
 
+        #region Method
         /// <summary>
         ///       Mã hóa mật khẩu với MD5
         /// </summary>
@@ -67,7 +64,7 @@ namespace ChatApplicationAuthen.Services
         ///         Đầu vào là request của người dùng được gửi lên
         /// </param>
         /// <returns>
-        ///         Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token
+        ///         Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token nếu đúng và trả về null nếu sai
         /// </returns>
         public async Task<AuthenticateResponse> Login(User userRequest)
         {
@@ -79,10 +76,8 @@ namespace ChatApplicationAuthen.Services
             // Nếu không tìm thấy tài khoản
             if (user == null) return null;
 
-            // Nếu tìm thấy tài khoản trả về token
             var token = generateJwtToken(user);
 
-            // Trả về token và user
             return new AuthenticateResponse(user, token);
         }
 
@@ -92,7 +87,7 @@ namespace ChatApplicationAuthen.Services
         /// <param name="user">
         /// </param>
         /// <returns>
-        ///   Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token
+        ///   Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token, trả về message lỗi nếu sai
         /// </returns>
         public async Task<AuthenticateResponse> Register(User user)
         {
@@ -103,7 +98,6 @@ namespace ChatApplicationAuthen.Services
             if (_context.Users.Any(x => x.Email == user.Email))
                 throw new AppException("Email " + user.Email + " da ton tai");
 
-            // Tao user voi request 
             var userAdd = new User
             {
                 Id = new Guid(),
@@ -115,14 +109,12 @@ namespace ChatApplicationAuthen.Services
                 Email = user.Email,
                 ContactMobile = user.ContactMobile
             };
-            // Them vao luu User
+
             _context.Users.Add(userAdd);
             await _context.SaveChangesAsync();
 
-            // Nếu tìm thấy tài khoản trả về token
             var token = generateJwtToken(userAdd);
 
-            // Trả về token và user
             return new AuthenticateResponse(userAdd, token);
         }
 
@@ -131,6 +123,7 @@ namespace ChatApplicationAuthen.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns>
+        ///         Trả về token cho người dùng
         /// </returns>
         public string generateJwtToken(User user)
         {
@@ -154,5 +147,6 @@ namespace ChatApplicationAuthen.Services
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        #endregion
     }
 }
