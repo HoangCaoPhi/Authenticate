@@ -33,7 +33,15 @@ namespace ChatApplicationAuthen.Services
             _config = config;
         }
 
-        // Ma hoa mat khau voi MD5
+        /// <summary>
+        ///       Mã hóa mật khẩu với MD5
+        /// </summary>
+        /// <param name="input">
+        ///       Đầu vào là một chuỗi mật khẩu của người dùng nhập vào
+        /// </param>
+        /// <returns>
+        ///        Trả về một chuỗi đã được mã hóa
+        /// </returns>
         public static string CreateMD5(string input)
         {
             // Lay du lieu de dung md5
@@ -52,6 +60,15 @@ namespace ChatApplicationAuthen.Services
             }
         }
 
+        /// <summary>
+        ///         Serivce xử lý login vào web
+        /// </summary>
+        /// <param name="userRequest">
+        ///         Đầu vào là request của người dùng được gửi lên
+        /// </param>
+        /// <returns>
+        ///         Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token
+        /// </returns>
         public async Task<AuthenticateResponse> Login(User userRequest)
         {
             // Lấy thông tin email và password từ request
@@ -69,6 +86,14 @@ namespace ChatApplicationAuthen.Services
             return new AuthenticateResponse(user, token);
         }
 
+        /// <summary>
+        ///         Xử lý đăng ký người dùng
+        /// </summary>
+        /// <param name="user">
+        /// </param>
+        /// <returns>
+        ///   Trả về đối tượng AuthenticateResponse gồm thông tin người dùng và token
+        /// </returns>
         public async Task<AuthenticateResponse> Register(User user)
         {
             // Kiem tra da nhap mat khau chua
@@ -101,6 +126,12 @@ namespace ChatApplicationAuthen.Services
             return new AuthenticateResponse(userAdd, token);
         }
 
+        /// <summary>
+        ///         SInh ra token để trả về cho người dùng
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>
+        /// </returns>
         public string generateJwtToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Secret"]));
@@ -118,7 +149,7 @@ namespace ChatApplicationAuthen.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddDays(7),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
