@@ -11,5 +11,7 @@ namespace ChatApplicationAuthen.Entities.DTO
         public ChatContext(DbContextOptions<ChatContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<File> Files { get; set; }
     }
 }
