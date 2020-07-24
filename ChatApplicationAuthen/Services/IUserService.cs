@@ -9,19 +9,11 @@ namespace ChatApplicationAuthen.Services
     public interface IUserService
     {
         /// <summary>
-        ///         Đăng nhập người dùng
+        ///     Cập nhật thông tin người dùng
         /// </summary>
-        /// <param name="user"> Thông tin người dùng nhập </param>
-        /// <returns> Trả về thông tin người dùng và token </returns>
-        Task<AuthenticateResponse> Login(User user);
-
-        /// <summary>
-        ///     Đăng ký người dùng
-        /// </summary>
-        /// <param name="user"> Thông tin người dùng đẩy lên khi đăng ký </param>
-        /// <returns> Trả về thông tin người dùng và token </returns>
-        Task<AuthenticateResponse> Register(User user);
-
+        /// <param name="id">Id của người dùng</param>
+        /// <param name="user">Thông tin lấy từ request của client</param>
+        /// <returns></returns>
         Task<User> update(Guid id, User user);
     }
 }

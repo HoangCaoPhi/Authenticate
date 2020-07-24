@@ -27,9 +27,6 @@ namespace ChatApplicationAuthen.Controllers
             return await _context.Files.ToListAsync();
         }
         
-
-        // GET: api/Files/
-
         // GET: api/Files/5
         [HttpGet("{convId}")]
         public async Task<ActionResult<File>> GetFile(String convId)

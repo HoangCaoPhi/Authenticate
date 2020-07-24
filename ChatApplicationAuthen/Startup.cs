@@ -82,6 +82,7 @@ namespace ChatApplicationAuthen
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
 
         }
 
