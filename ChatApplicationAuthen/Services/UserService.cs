@@ -118,6 +118,34 @@ namespace ChatApplicationAuthen.Services
             return new AuthenticateResponse(userAdd, token);
         }
 
+        public async Task<User> update(Guid id, User user)
+        {
+
+
+            var userUpdate = _context.Users.SingleOrDefault(u => u.Id == id);
+
+            if (userUpdate == null) throw new AppException("Không tìm thấy tài khoản update !");
+            userUpdate.UserName = user.UserName;
+            userUpdate.FirstName = user.FirstName;
+            userUpdate.LastName = user.LastName;
+            userUpdate.AvatarUrl = user.AvatarUrl;
+            userUpdate.ContactMobile = user.ContactMobile;
+
+            _context.Entry(userUpdate).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                throw new AppException("Cập nhật thất bại !");
+            }
+
+
+            return userUpdate;
+        }
+
         /// <summary>
         ///         SInh ra token để trả về cho người dùng
         /// </summary>
@@ -136,6 +164,7 @@ namespace ChatApplicationAuthen.Services
                 new Claim("userId", user.Id.ToString()),
                 new Claim("userName", user.UserName.ToString()),
                 new Claim("avt", user.AvatarUrl.ToString()),
+
             };
 
             var token = new JwtSecurityToken(

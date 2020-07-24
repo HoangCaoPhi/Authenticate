@@ -78,7 +78,7 @@ namespace ChatApplicationAuthen.Controllers
 
 
         // GET: api/Users
- 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -103,32 +103,17 @@ namespace ChatApplicationAuthen.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public async Task<ActionResult> PutUser([FromRoute] Guid id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var userU = await _userService.update(id, user);
+                return Ok(userU);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (AppException ex)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new { message = ex.Message });
             }
-
-            return NoContent();
         }
 
 

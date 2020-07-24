@@ -1,6 +1,7 @@
 ﻿
 using ChatApplicationAuthen.Entities.DTO;
 using ChatApplicationAuthen.Entities.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace ChatApplicationAuthen.Services
@@ -20,5 +21,7 @@ namespace ChatApplicationAuthen.Services
         /// <param name="user"> Thông tin người dùng đẩy lên khi đăng ký </param>
         /// <returns> Trả về thông tin người dùng và token </returns>
         Task<AuthenticateResponse> Register(User user);
+
+        Task<User> update(Guid id, User user);
     }
 }

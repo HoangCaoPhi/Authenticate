@@ -35,8 +35,7 @@ namespace ChatApplicationAuthen.Controllers
         public async Task<ActionResult<File>> GetFile(String convId)
         {
             // return await _context.Files.ToListAsync(id);
-            var files =   await _context.Files
-                        .Where(u => u.convId == convId).ToListAsync();
+            var files = await _context.Files.Where(u => u.convId == convId).ToListAsync();
             return Ok(files);
         }
 
